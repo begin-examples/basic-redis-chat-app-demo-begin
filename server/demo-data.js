@@ -29,7 +29,7 @@ const addMessage = async (roomId, fromId, content, timestamp = moment().unix()) 
     roomId,
   };
   /** Now the other user sends the greeting to the user */
-  // await zadd(roomKey, "" + message.date, JSON.stringify(message));
+  await zadd(roomKey, "" + message.date, JSON.stringify(message));
 };
 
 const createDemoData = async () => {

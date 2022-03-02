@@ -12,8 +12,9 @@ async function roomMessages (req) {
   const roomId = req.params.id;
   const offset = +req.query.offset || 0;
   const size = +req.query.size || 20;
+
+  await redisClient.connect()
   try {
-    await redisClient.connect()
     const messages = await getMessages(roomId, offset, size);
     redisClient.quit()
     return {
@@ -24,6 +25,7 @@ async function roomMessages (req) {
       json: messages
     }
   } catch (err) {
+    redisClient.quit()
     return {
       statusCode: 400,
       headers: {

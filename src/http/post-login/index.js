@@ -1,49 +1,58 @@
-// learn more about HTTP functions here: https://arc.codes/http
-exports.handler = async function http (req) {
+const { http } = require('@architect/functions')
+const bcrypt = require("bcrypt");
+const {
+  client: redisClient,
+  get,
+  exists,
+  hgetall
+} = require("@architect/shared/redis")
+const { createUser, makeUsernameKey } = require("@architect/shared/utils");
+
+exports.handler = http.async(login)
+
+async function login (req) {
+  await redisClient.connect()
+  const { username, password } = req.body;
+  const usernameKey = makeUsernameKey(username);
+  const userExists = await exists(usernameKey);
+  console.log(username, password, usernameKey, userExists)
+  if (!userExists) {
+    const newUser = await createUser(username, password);
+    /** @ts-ignore */
+    req.session.user = newUser;
+    redisClient.quit()
+    return {
+      statusCode: 201,
+      headers: {
+        'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0'
+      },
+      json: newUser
+    }
+  } else {
+    const userKey = await get(usernameKey);
+    const data = await hgetall(userKey);
+    console.log(userKey, password, data.password)
+    if (await bcrypt.compare(password, data.password)) {
+      const user = { id: userKey.split(":").pop(), username };
+      /** @ts-ignore */
+      req.session.user = user;
+      redisClient.quit()
+      return {
+        statusCode: 200,
+        headers: {
+          'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0'
+        },
+        json: user
+      }
+    }
+  }
+  // user not found
+  redisClient.quit()
   return {
-    statusCode: 200,
+    statusCode: 404,
     headers: {
-      'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0',
-      'content-type': 'text/html; charset=utf8'
+      'cache-control': 'no-cache, no-store, must-revalidate, max-age=0, s-maxage=0'
     },
-    body: `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Architect</title>
-  <style>
-     * { margin: 0; padding: 0; box-sizing: border-box; } body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; } .max-width-320 { max-width: 20rem; } .margin-left-8 { margin-left: 0.5rem; } .margin-bottom-16 { margin-bottom: 1rem; } .margin-bottom-8 { margin-bottom: 0.5rem; } .padding-32 { padding: 2rem; } .color-grey { color: #333; } .color-black-link:hover { color: black; } 
-  </style>
-</head>
-<body class="padding-32">
-  <div class="max-width-320">
-    <img src="https://assets.arc.codes/logo.svg" />
-    <div class="margin-left-8">
-      <div class="margin-bottom-16">
-        <h1 class="margin-bottom-16">
-          Hello from an Architect Node.js function!
-        </h1>
-        <p class="margin-bottom-8">
-          Get started by editing this file at:
-        </p>
-        <code>
-          src/http/post-login/index.js
-        </code>
-      </div>
-      <div>
-        <p class="margin-bottom-8">
-          View documentation at:
-        </p>
-        <code>
-          <a class="color-grey color-black-link" href="https://arc.codes">https://arc.codes</a>
-        </code>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
-`
+    json: { message: "Invalid username or password" }
   }
 }
