@@ -9,7 +9,7 @@ Showcases how to impliment chat app in Node.js, Socket.IO and Redis. This exampl
 
 Here's a short video that explains the project and how it uses Redis:
 
-[![Watch the video on YouTube](https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/README.md)](https://www.youtube.com/watch?v=miK7xDkDXF0)
+[![Watch the video on YouTube](https://raw.githubusercontent.com/redis-developer/basic-redis-chat-app-demo-nodejs/main/docs/screenshot000.png)](https://www.youtube.com/watch?v=miK7xDkDXF0)
 
 ## Technical Stacks
 
