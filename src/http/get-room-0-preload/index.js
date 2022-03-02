@@ -1,8 +1,7 @@
 const { http } = require('@architect/functions')
 const {
   client: redisClient,
-  get,
-  auth: runRedisAuth,
+  get
 } = require("@architect/shared/redis")
 const { getMessages } = require("@architect/shared/utils");
 
@@ -10,8 +9,8 @@ exports.handler = http.async(roomPreload)
 
 async function roomPreload () {
   const roomId = "0";
+  await redisClient.connect()
   try {
-    await redisClient.connect()
     let name = await get(`room:${roomId}:name`);
     const messages = await getMessages(roomId, 0, 20);
     redisClient.quit()
@@ -23,6 +22,7 @@ async function roomPreload () {
       json: { id: roomId, name, messages }
     }
   } catch (err) {
+    redisClient.quit()
     return {
       statusCode: 400,
       headers: {

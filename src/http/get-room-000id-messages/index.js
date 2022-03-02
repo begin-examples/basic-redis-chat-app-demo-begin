@@ -1,8 +1,6 @@
 const { http } = require('@architect/functions')
 const {
-  client: redisClient,
-  get,
-  auth: runRedisAuth,
+  client: redisClient
 } = require("@architect/shared/redis")
 const { getMessages } = require("@architect/shared/utils");
 

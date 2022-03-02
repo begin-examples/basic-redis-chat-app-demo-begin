@@ -2,16 +2,16 @@ const { http } = require('@architect/functions')
 const {
   client: redisClient,
   hgetall,
-  sismember,
-  auth: runRedisAuth,
+  sismember
 } = require("@architect/shared/redis")
 
 exports.handler = http.async(getUsers)
 
 async function getUsers (req) {
+  console.log('getUsers')
     await redisClient.connect()
     /** @ts-ignore */
-    /** @type {string[]} */ const ids = Array.from(req.query.ids);
+    /** @type {string[]} */ const ids = Array.from(req.query['ids[]'])
     if (typeof ids === "object" && Array.isArray(ids)) {
       /** Need to fetch */
       const users = {};

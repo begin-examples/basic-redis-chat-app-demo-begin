@@ -4,8 +4,7 @@ const {
   exists,
   get,
   hmget,
-  smembers,
-  auth: runRedisAuth,
+  smembers
 } = require("@architect/shared/redis")
 
 exports.handler = http.async(roomsUserid)
@@ -13,10 +12,8 @@ exports.handler = http.async(roomsUserid)
 async function roomsUserid (req) {
   const userId = req.params.userId;
   await redisClient.connect()
-  console.log(redisClient)
   /** We got the room ids */
   const roomIds = await smembers(`user:${userId}:rooms`);
-  console.log("roomIds", roomIds)
   const rooms = [];
   for (let x = 0; x < roomIds.length; x++) {
     const roomId = roomIds[x];
@@ -48,7 +45,6 @@ async function roomsUserid (req) {
       rooms.push({ id: roomId, names: [name] });
     }
   }
-  console.log('do we get here')
   redisClient.quit()
   return {
     statusCode: 200,
