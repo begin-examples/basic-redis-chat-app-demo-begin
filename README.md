@@ -1,6 +1,6 @@
 # Basic Redis Chat App Demo (Begin)
 
-Showcases how to impliment chat app in Node.js, Socket.IO and Redis. This example uses **pub/sub** feature combined with web-sockets for implementing the message communication between client and server.
+Showcases how to implement chat app in Node.js, Socket.IO and Redis. This example uses **Pub/Sub** feature combined with web-sockets for implementing the message communication between client and server.
 
 <a href="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot000.png"><img src="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot000.png" width="49%"></a>
 <a href="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot001.png"><img src="https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/docs/screenshot001.png" width="49%"></a>
@@ -9,7 +9,9 @@ Showcases how to impliment chat app in Node.js, Socket.IO and Redis. This exampl
 
 Here's a short video that explains the project and how it uses Redis:
 
-[![Watch the video on YouTube](https://github.com/redis-developer/basic-redis-chat-app-demo-nodejs/raw/main/README.md)](https://www.youtube.com/watch?v=miK7xDkDXF0)
+[![Watch the video on YouTube](https://raw.githubusercontent.com/redis-developer/basic-redis-chat-app-demo-nodejs/main/docs/screenshot000.png)](https://www.youtube.com/watch?v=miK7xDkDXF0)
+
+
 
 ## Technical Stacks
 
