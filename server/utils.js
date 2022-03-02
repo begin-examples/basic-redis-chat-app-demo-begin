@@ -12,10 +12,11 @@ const makeUsernameKey = (username) => {
 
 /**
  * Creates a user and adds default chat rooms
- * @param {string} username 
- * @param {string} password 
+ * @param {string} username
+ * @param {string} password
  */
 const createUser = async (username, password) => {
+  console.log("create user", username)
   const usernameKey = makeUsernameKey(username);
   /** Create user */
   const hashedPassword = await bcrypt.hash(password, 10);

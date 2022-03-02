@@ -23,6 +23,7 @@ const {
   srem,
   sub,
   auth: runRedisAuth,
+  client,
 } = require("./redis");
 const {
   createUser,
@@ -33,6 +34,8 @@ const {
 } = require("./utils");
 const { createDemoData } = require("./demo-data");
 const { PORT, SERVER_ID } = require("./config");
+
+console.log(PORT, SERVER_ID)
 
 const app = express();
 const server = require("http").createServer(app);
@@ -87,10 +90,15 @@ const initPubSub = () => {
 
 /** Initialize the app */
 (async () => {
+  await client.connect()
+  await sub.connect()
   /** Need to submit the password from the local stuff. */
+  console.log('runRedisAuth')
   await runRedisAuth();
   /** We store a counter for the total users and increment it on each register */
+  console.log('totalUsersKeyExist')
   const totalUsersKeyExist = await exists("total_users");
+  console.log('totalUsersKeyExist', totalUsersKeyExist)
   if (!totalUsersKeyExist) {
     /** This counter is used for the id */
     await set("total_users", 0);
@@ -106,6 +114,7 @@ const initPubSub = () => {
   }
 
   /** Once the app is initialized, run the server */
+  console.log('about to call runapp')
   runApp();
 })();
 
@@ -228,6 +237,7 @@ async function runApp() {
     const { username, password } = req.body;
     const usernameKey = makeUsernameKey(username);
     const userExists = await exists(usernameKey);
+    console.log(username, password, usernameKey, userExists)
     if (!userExists) {
       const newUser = await createUser(username, password);
       /** @ts-ignore */
@@ -236,6 +246,7 @@ async function runApp() {
     } else {
       const userKey = await get(usernameKey);
       const data = await hgetall(userKey);
+      console.log(userKey, password, data.password)
       if (await bcrypt.compare(password, data.password)) {
         const user = { id: userKey.split(":").pop(), username };
         /** @ts-ignore */
@@ -376,11 +387,14 @@ async function runApp() {
    * We have an external port from the environment variable. To get this working on heroku,
    * it's required to specify the host
    */
+  console.log("above port check")
   if (process.env.PORT) {
+    console.log("listening on port", process.env.PORT )
     server.listen(+PORT, "0.0.0.0", () =>
       console.log(`Listening on ${PORT}...`)
     );
   } else {
+    console.log("listening on port", PORT )
     server.listen(+PORT, () => console.log(`Listening on ${PORT}...`));
   }
 }
